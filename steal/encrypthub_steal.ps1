@@ -50,7 +50,7 @@ function Send-TelegramMessage {
     }
 
     $botToken = "7484009227:AAEvngzrIKFNFdfSqECzWAqbnB5IXk8pjVo" 
-	$chatID = "-1002168553106"
+    $chatID = "-1002168553106"
     $serverIP = "Server IP"
     $os = Get-WmiObject Win32_OperatingSystem
     $osVersion = $os.Caption
