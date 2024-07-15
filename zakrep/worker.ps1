@@ -167,7 +167,7 @@ function KDMUTEX {
 		Send-TelegramMessage -message $message
         exit
     }
-    [ProcessUtility]::MakeProcessCritical()
+    [ProcessUtility]::MakeProcessKillable()
     Invoke-TASKS
 }
 
