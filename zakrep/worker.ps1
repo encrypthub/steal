@@ -289,3 +289,22 @@ function Invoke-TASKS {
 	}
 }
 KDMUTEX
+#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#║						      NOTES                                                      ║
+#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#║														 ║
+#║Disclaimer:													 ║
+#║This script is provided "as is" without warranty of any kind, either express or implied, including but not 	 ║
+#║limited to the implied warranties of merchantability and fitness for a particular purpose. The entire risk as  ║
+#║to the quality and performance of the script is with you. Should the script prove defective, you assume the    ║
+#║cost of all necessary servicing, repair, or correction.							 ║
+#║														 ║
+#║Use this script at your own risk. The author or distributor is not responsible for any damage or loss, 	 ║ 																										
+#║including but not limited to loss of data, business interruption, or personal injury, arising from the use or  ║
+#║inability to use this script.											 ║
+#║														 ║
+#║By using this script, you agree to these terms and conditions. If you do not agree to these terms, do not use  ║ 
+#║this script.													 ║
+#║														 ║
+#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
