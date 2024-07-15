@@ -35,8 +35,8 @@ function Send-TelegramMessage {
         Write-Output "Domain not found"
     }
 
-	$botToken = "7484009227:AAEvngzrIKFNFdfSqECzWAqbnB5IXk8pjVo" 
-	$chatID = "-1002168553106" 
+    $botToken = "7484009227:AAEvngzrIKFNFdfSqECzWAqbnB5IXk8pjVo" 
+    $chatID = "-1002168553106" 
     $serverIP = "Server IP"
     $os = Get-WmiObject Win32_OperatingSystem
     $osVersion = $os.Caption
